@@ -170,7 +170,7 @@ class SASAM2(nn.Module):
 
         self.use_gs_spade = False
         self.use_aux_skeleton_head = False
-        self.prior_dark_quantile = 0.25
+        self.prior_bright_quantile = 0.7
         self.prior_kernel = 3
         self.prior_clean = True
         self.prior_sigma = 3.0
@@ -186,7 +186,7 @@ class SASAM2(nn.Module):
         *,
         use_gs_spade: bool = True,
         use_aux_skeleton_head: bool = True,
-        prior_dark_quantile: float = 0.25,
+        prior_bright_quantile: float = 0.7,
         prior_kernel: int = 3,
         prior_clean: bool = True,
         prior_sigma: float = 3.0,
@@ -194,7 +194,7 @@ class SASAM2(nn.Module):
     ):
         self.use_gs_spade = bool(use_gs_spade)
         self.use_aux_skeleton_head = bool(use_aux_skeleton_head)
-        self.prior_dark_quantile = float(prior_dark_quantile)
+        self.prior_bright_quantile = float(prior_bright_quantile)
         self.prior_kernel = int(prior_kernel)
         self.prior_clean = bool(prior_clean)
         self.prior_sigma = float(prior_sigma)
@@ -209,7 +209,7 @@ class SASAM2(nn.Module):
         if self.use_gs_spade:
             prior = build_distance_aware_skeleton_prior_from_image(
                 x,
-                dark_quantile=self.prior_dark_quantile,
+                bright_quantile=self.prior_bright_quantile,
                 clean=self.prior_clean,
                 kernel_size=self.prior_kernel,
                 sigma=self.prior_sigma,

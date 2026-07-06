@@ -54,11 +54,10 @@ class GatedSkeletonSPADE(nn.Module):
         act = self.mlp_shared(prior)
         gamma = self.mlp_gamma(act)
         beta = self.mlp_beta(act)
-        modulated = normalized * (1 + gamma) + beta
 
         gate_input = torch.cat((normalized, prior), dim=1)
         gate = torch.sigmoid(self.gate_net(gate_input))
-        return x + gate * (modulated - x)
+        return normalized * (1 + gate * gamma) + gate * beta
 
 
 class SkeletonAuxHead(nn.Module):
@@ -107,7 +106,7 @@ def build_skeleton_tensor_from_binary_mask(
 def build_distance_aware_skeleton_prior_from_image(
     images: torch.Tensor,
     *,
-    dark_quantile: float = 0.25,
+    bright_quantile: float = 0.7,
     clean: bool = True,
     kernel_size: int = 3,
     sigma: float = 3.0,
@@ -119,10 +118,12 @@ def build_distance_aware_skeleton_prior_from_image(
             gray = 0.299 * image[0] + 0.587 * image[1] + 0.114 * image[2]
         else:
             gray = image[0]
+        if gray.max() > 1.5:
+            gray = gray / 255.0
 
         flat = gray.reshape(-1)
-        threshold = np.median(flat) if dark_quantile <= 0.0 or dark_quantile >= 1.0 else float(np.quantile(flat, dark_quantile))
-        vessel_mask = gray <= threshold
+        threshold = np.median(flat) if bright_quantile <= 0.0 or bright_quantile >= 1.0 else float(np.quantile(flat, bright_quantile))
+        vessel_mask = gray >= threshold
         if clean:
             vessel_mask = _apply_morphology(vessel_mask, kernel_size=kernel_size)
 

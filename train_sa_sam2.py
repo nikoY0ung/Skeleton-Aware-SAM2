@@ -30,7 +30,7 @@ parser.add_argument("--weight_decay", default=5e-4, type=float)
 parser.add_argument("--use-gs-spade", "--use_skeleton_spade", dest="use_gs_spade", action="store_true")
 parser.add_argument("--use-aux-skeleton-head", "--use_skeleton_aux_head", dest="use_aux_skeleton_head", action="store_true")
 parser.add_argument("--skeleton_aux_loss_weight", type=float, default=0.15)
-parser.add_argument("--prior-dark-quantile", "--skeleton_dark_quantile", dest="prior_dark_quantile", type=float, default=0.25)
+parser.add_argument("--prior-bright-quantile", "--skeleton_bright_quantile", dest="prior_bright_quantile", type=float, default=0.7)
 parser.add_argument("--prior-kernel", "--skeleton_kernel", dest="prior_kernel", type=int, default=3)
 parser.add_argument("--prior-sigma", type=float, default=3.0)
 parser.add_argument("--no-prior-clean", "--no_skeleton_clean", dest="no_prior_clean", action="store_true")
@@ -56,7 +56,7 @@ def main(args):
     model.set_structural_prior_cfg(
         use_gs_spade=bool(args.use_gs_spade),
         use_aux_skeleton_head=bool(args.use_aux_skeleton_head),
-        prior_dark_quantile=float(args.prior_dark_quantile),
+        prior_bright_quantile=float(args.prior_bright_quantile),
         prior_kernel=int(args.prior_kernel),
         prior_clean=not bool(args.no_prior_clean),
         prior_sigma=float(args.prior_sigma),
@@ -69,7 +69,7 @@ def main(args):
     run_config = {
         "use_gs_spade": bool(args.use_gs_spade),
         "use_aux_skeleton_head": bool(args.use_aux_skeleton_head),
-        "prior_dark_quantile": float(args.prior_dark_quantile),
+        "prior_bright_quantile": float(args.prior_bright_quantile),
         "prior_kernel": int(args.prior_kernel),
         "prior_clean": not bool(args.no_prior_clean),
         "prior_sigma": float(args.prior_sigma),
